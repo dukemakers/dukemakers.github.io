@@ -1,0 +1,40 @@
+<div class="container" id="message"><div class="row marketing"><h1>In Development!</h1><p>Welcome to the DukeMakers Share Space. Here you can upload your own creations to share with the Duke Community. Not finished yet, but here is a sneak peak!</p></div></div><div class="row marketing"><h1 id="welcome" class="blockhead">Please <span id="login" class="btn btn-lg btn-primary">Log In!</span></h1></div><div id="sharing" class="masonry-container"><div class="thing" ng-repeat="thing in things" thingid="{{thing.thingId}}" authorid="{{thing.thingAuthorId}}" datetime="{{thing.thingDate}}"><h3>{{thing.thingName}}</h3><p>Made by: <strong><a ng-href="{{thing.thingAuthorFbLink}}">{{thing.thingAuthor}}</a></strong></p><p>{{thing.thingDescription}}</p><div class="center-wrap"><div class="btn-group"><button type="button" class="btn btn-primary download">Downloads: {{thing.thingDownloadCount}}</button> <button type="button" class="btn btn-primary like">Stars: {{thing.thingLikeCount}}</button></div></div><img ng-src="images/uploads/preview/{{thing.thingId}}.jpg"></div></div><script>var loginBtn = document.getElementById('login');
+	loginBtn.addEventListener('click', function(){
+		FB.login();
+	});</script><script>var contain = document.querySelector('#sharing');
+	imagesLoaded(contain, function(){
+		var msnry = new Masonry(contain, {
+			"itemSelector": '.thing',
+			"gutter": 10,
+			"isFitWidth": true
+		});
+	});</script><script>Path.listen();
+initialize();
+// var container = document.querySelector('#sharing');
+// var msnry = new Masonry( container, {
+//   // options
+//   columnWidth: 200,
+//   itemSelector: '.item'
+// });
+window.fbAsyncInit = function() {
+	FB.init({
+		appId      : '458172024308342',
+		cookie     : true, // enable cookies to allow the server to access the session
+		xfbml      : true  // parse XFBML
+	});
+};
+
+FB.Event.subscribe('auth.authResponseChange', function(response) {if (response.status === 'connected') {initialize();}});
+
+function initialize() {
+	FB.getLoginStatus(function(response) {
+		if(response.status === 'connected'){
+			var welcome = document.getElementById('welcome');
+			FB.api('/me', function(response) {
+				welcome.innerHTML = "Welcome " + response.name + "!" + 
+				"<img src ='https://graph.facebook.com/"+ response.id +"/picture?type=normal'></img>";
+				document.getElementById("message").remove();
+			});
+		}
+	});
+}</script>
